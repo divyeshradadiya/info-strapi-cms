@@ -389,3 +389,190 @@
   }
 }
 
+/* Tiptap Editor Styles */
+.ProseMirror {
+  outline: none;
+}
+
+.ProseMirror p.is-editor-empty:first-child::before {
+  color: #adb5bd;
+  content: attr(data-placeholder);
+  float: left;
+  height: 0;
+  pointer-events: none;
+}
+
+/* Read-only markdown viewer specific styles */
+.read-only-markdown-viewer .ProseMirror {
+  padding: 0;
+}
+
+.read-only-markdown-viewer .ProseMirror h1 {
+  font-size: 2.25rem;
+  font-weight: 700;
+  line-height: 2.5rem;
+  margin-bottom: 1.5rem;
+  margin-top: 2rem;
+}
+
+.read-only-markdown-viewer .ProseMirror h2 {
+  font-size: 1.875rem;
+  font-weight: 600;
+  line-height: 2.25rem;
+  margin-bottom: 1.25rem;
+  margin-top: 1.75rem;
+}
+
+.read-only-markdown-viewer .ProseMirror h3 {
+  font-size: 1.5rem;
+  font-weight: 600;
+  line-height: 2rem;
+  margin-bottom: 1rem;
+  margin-top: 1.5rem;
+}
+
+.read-only-markdown-viewer .ProseMirror h4 {
+  font-size: 1.25rem;
+  font-weight: 600;
+  line-height: 1.75rem;
+  margin-bottom: 0.75rem;
+  margin-top: 1.25rem;
+}
+
+.read-only-markdown-viewer .ProseMirror h5 {
+  font-size: 1.125rem;
+  font-weight: 600;
+  line-height: 1.75rem;
+  margin-bottom: 0.5rem;
+  margin-top: 1rem;
+}
+
+.read-only-markdown-viewer .ProseMirror h6 {
+  font-size: 1rem;
+  font-weight: 600;
+  line-height: 1.5rem;
+  margin-bottom: 0.5rem;
+  margin-top: 1rem;
+}
+
+.read-only-markdown-viewer .ProseMirror p {
+  margin-bottom: 1rem;
+  line-height: 1.75;
+}
+
+.read-only-markdown-viewer .ProseMirror ul,
+.read-only-markdown-viewer .ProseMirror ol {
+  margin-bottom: 1rem;
+  padding-left: 1.5rem;
+}
+
+.read-only-markdown-viewer .ProseMirror li {
+  margin-bottom: 0.5rem;
+}
+
+.read-only-markdown-viewer .ProseMirror strong {
+  font-weight: 700;
+}
+
+.read-only-markdown-viewer .ProseMirror em {
+  font-style: italic;
+}
+
+.read-only-markdown-viewer .ProseMirror blockquote {
+  border-left: 4px solid #e5e7eb;
+  padding-left: 1rem;
+  margin: 1.5rem 0;
+  font-style: italic;
+  color: #6b7280;
+}
+
+.read-only-markdown-viewer .ProseMirror hr {
+  border: none;
+  border-top: 1px solid #e5e7eb;
+  margin: 2rem 0;
+}
+
+/* Table styles for read-only viewer */
+.ProseMirror table {
+  border-collapse: collapse;
+  margin: 1.5rem 0;
+  overflow: hidden;
+  table-layout: fixed;
+  width: 100%;
+  border: 1px solid #e5e7eb;
+  border-radius: 0.5rem;
+}
+
+.ProseMirror table td,
+.ProseMirror table th {
+  border: 1px solid #e5e7eb;
+  box-sizing: border-box;
+  min-width: 1em;
+  padding: 0.75rem;
+  position: relative;
+  vertical-align: top;
+}
+
+.ProseMirror table th {
+  background-color: #f9fafb;
+  font-weight: 600;
+  text-align: left;
+}
+
+.ProseMirror table .selectedCell:after {
+  background: rgba(200, 200, 255, 0.4);
+  content: "";
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  pointer-events: none;
+  position: absolute;
+  z-index: 2;
+}
+
+.ProseMirror pre {
+  background: #f3f4f6;
+  border: 1px solid #e5e7eb;
+  border-radius: 0.5rem;
+  color: #374151;
+  font-family: 'Fira Code', 'JetBrains Mono', 'SFMono-Regular', 'SF Mono', 'Consolas', 'Liberation Mono', 'Menlo', monospace;
+  padding: 1rem;
+  white-space: pre-wrap;
+  overflow-x: auto;
+  margin: 1.5rem 0;
+}
+
+.dark .ProseMirror pre {
+  background: #1f2937;
+  border-color: #374151;
+  color: #d1d5db;
+}
+
+.ProseMirror code {
+  background-color: #f3f4f6;
+  border: 1px solid #e5e7eb;
+  border-radius: 0.25rem;
+  color: #dc2626;
+  font-size: 0.875rem;
+  padding: 0.125rem 0.25rem;
+  font-family: 'Fira Code', 'JetBrains Mono', 'SFMono-Regular', 'SF Mono', 'Consolas', 'Liberation Mono', 'Menlo', monospace;
+}
+
+.dark .ProseMirror code {
+  background-color: #374151;
+  border-color: #4b5563;
+  color: #f87171;
+}
+
+.ProseMirror blockquote {
+  border-left: 2px solid rgba(13, 13, 13, 0.1);
+  padding-left: 1rem;
+}
+
+.ProseMirror hr {
+  border: none;
+  border-top: 2px solid rgba(13, 13, 13, 0.1);
+  margin: 2rem 0;
+}
+

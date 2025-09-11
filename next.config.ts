@@ -1,5 +1,4 @@
 import type { NextConfig } from "next";
-
 const nextConfig: NextConfig = {
   /* config options here */
   images: {
@@ -13,6 +12,10 @@ const nextConfig: NextConfig = {
       {
         protocol: "https",
         hostname: "motivated-health-e41c7505c5.media.strapiapp.com",
+      },
+      {
+        protocol: "https",
+        hostname: "strapi-backend-w85m.onrender.com",
       },
     ],
   },

@@ -7,7 +7,9 @@ import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Badge } from '@/components/ui/badge';
+import { MarkdownEditor } from '@/components/ui/markdown-editor';
 import { Post, PostFormData, Category } from '@/data/services/posts-api';
+import { MarkdownText } from '../custom/markdown-text';
 
 interface PostFormProps {
   post?: Post | null;
@@ -112,13 +114,14 @@ export const PostForm: React.FC<PostFormProps> = ({
 
       <div className="space-y-2">
         <Label htmlFor="content">Content</Label>
-        <Textarea
-          id="content"
-          value={formData.content}
-          onChange={(e) => setFormData(prev => ({ ...prev, content: e.target.value }))}
-          placeholder="Write your post content here... (Note: Blocks/rich content editing available in Strapi admin)"
-          rows={6}
-        />
+        {/* <MarkdownEditor
+          content={formData.content}
+          onChange={(content) => setFormData(prev => ({ ...prev, content }))}
+          placeholder="Write your post content here using markdown..."
+          className="min-h-[300px]"
+          outputFormat="html"
+        /> */}
+        <MarkdownText content={formData.content} />
       </div>
 
       <div className="space-y-2">

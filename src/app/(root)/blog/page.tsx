@@ -65,7 +65,7 @@ export default async function BlogRoute({ searchParams }: PageProps) {
                   <CardContent className="flex h-full flex-col items-start gap-5 px-0">
                     <div className="relative h-52 w-full">
                       <StrapiImage
-                        alt={item.image.alternativeText}
+                        alt={item.image?.alternativeText ? item.image.alternativeText : item.title}
                         src={item.image.url}
                         fill
                         className="object-cover rounded-t-lg"
@@ -75,7 +75,7 @@ export default async function BlogRoute({ searchParams }: PageProps) {
                       <h4 className="text-lg font-semibold">{item.title}</h4>
                       <p className="mb-auto text-muted-foreground">{item.description}</p>
                       <div className="flex items-center gap-3">
-                        <span className="rounded-full outline outline-1 outline-primary text-primary px-3 py-0.5 text-sm">
+                        <span className="rounded-full outline outline-primary text-primary px-3 py-0.5 text-sm">
                           {item.category.text}
                         </span>
                         <span className="text-sm text-muted-foreground">{formatDate(item.publishedAt)}</span>

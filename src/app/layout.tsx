@@ -26,11 +26,11 @@ export const metadata: Metadata = {
   authors: [{ name: "NewsHub Team" }],
   creator: "NewsHub",
   publisher: "NewsHub",
-  metadataBase: new URL("http://localhost:3000"),
+  metadataBase: new URL(process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000"),
   openGraph: {
     type: "website",
     locale: "en_US",
-    url: "http://localhost:3000",
+    url: process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000",
     title: "NewsHub - Latest News & Blog Platform",
     description: "Stay informed with breaking news, expert analysis, and thought-provoking articles from around the world.",
     siteName: "NewsHub",

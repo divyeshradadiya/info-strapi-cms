@@ -2,10 +2,11 @@ import { Metadata } from "next";
 import { draftMode } from "next/headers";
 import { notFound } from "next/navigation";
 import { formatDate } from "@/lib/utils";
-import { MarkdownText } from "@/components/custom/markdown-text";
+import { ReadOnlyMarkdownViewer } from "@/components/ui/read-only-markdown-viewer";
 import { StrapiImage } from "@/components/custom/strapi-image";
 import { getBlogPostBySlug } from "@/data/loaders";
 import { BlockRenderer } from "@/components/block-renderer";
+import { MarkdownText } from "@/components/custom/markdown-text";
 interface PageProps {
   params: Promise<{ slug: string }>;
 }
@@ -59,14 +60,16 @@ export default async function SinglePost({ params }: PageProps) {
           <p className="text-muted-foreground">
             Posted on {formatDate(post.publishedAt)} - {post.category.text}
           </p>
-          <StrapiImage
-            src={post.image.url}
-            alt={post.image.alternativeText}
-            width={800}
-            height={600}
-            priority
-            className="w-full rounded-lg mt-8"
-          />
+            {post.image?.url && (
+            <StrapiImage
+              src={post.image.url}
+              alt={post.image?.alternativeText ? post.image.alternativeText : post.title}
+              width={800}
+              height={600}
+              priority
+              className="w-full rounded-lg mt-8"
+            />
+          )}
         </header>
       </div>
 
