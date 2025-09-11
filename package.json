@@ -1,26 +1,47 @@
 {
-  "name": "strapi-next-starter",
-  "version": "1.0.0",
-  "description": "Strapi starter project with Next.js",
-  "type": "module",
+  "name": "client",
+  "version": "0.1.0",
+  "private": true,
   "scripts": {
-  "client": "pnpm --dir ../client dev",
-  "server": "pnpm --dir ../server dev",
-  "setup:client": "cd client && pnpm install && node --loader ts-node/esm ../copy-env.mts ./",
-  "setup:server": "cd server && pnpm install && node --loader ts-node/esm ../copy-env.mts ./",
-  "setup": "pnpm install && pnpm setup:client && pnpm setup:server",
-  "dev": "pnpm concurrently \"cd server && pnpm develop\" \"npx wait-on http://localhost:1337 && cd client && pnpm dev\"",
-  "seed": "cd server && pnpm strapi import -f ../seed-data.tar.gz --force",
-  "export": "cd server && pnpm strapi export --no-encrypt -f ../seed-data",
-    "repo:upstream": "git fetch upstream && git merge upstream/main"
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint"
   },
   "dependencies": {
-    "@types/node": "^22.5.2",
-    "concurrently": "^8.2.2",
-    "typescript": "^5.0.0",
-    "wait-on": "^8.0.1"
+    "@lobehub/ui": "^2.12.3",
+    "@radix-ui/react-dialog": "^1.1.15",
+    "@radix-ui/react-dropdown-menu": "^2.1.12",
+    "@radix-ui/react-label": "^2.1.4",
+    "@radix-ui/react-select": "^2.2.6",
+    "@radix-ui/react-slot": "^1.2.3",
+    "@radix-ui/react-tabs": "^1.1.13",
+    "@strapi/client": "^1.3.0",
+    "class-variance-authority": "^0.7.1",
+    "clsx": "^2.1.1",
+    "embla-carousel-react": "^8.6.0",
+    "lucide-react": "^0.503.0",
+    "next": "15.3.1",
+    "next-themes": "^0.4.6",
+    "react": "^19.1.0",
+    "react-dom": "^19.1.0",
+    "react-markdown": "^10.1.0",
+    "react-player": "^2.16.0",
+    "remark-gfm": "^4.0.1",
+    "sonner": "^2.0.7",
+    "tailwind-merge": "^3.2.0",
+    "tailwindcss-animate": "^1.0.7",
+    "use-debounce": "^10.0.4",
+    "zod": "^3.24.3"
   },
   "devDependencies": {
-    "ts-node": "^10.9.2"
+    "@tailwindcss/postcss": "^4.1.5",
+    "@types/node": "^22",
+    "@types/react": "^19",
+    "@types/react-dom": "^19",
+    "postcss": "^8",
+    "tailwindcss": "^4.1.5",
+    "tw-animate-css": "^1.2.8",
+    "typescript": "^5"
   }
 }

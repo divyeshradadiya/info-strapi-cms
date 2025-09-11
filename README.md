@@ -1,120 +1,36 @@
-# Getting Started With Strapi 5 and Next.js 15 
+This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
 
-Have you ever wondered how well Strapi and Next.js work together? You can take it for a test run with this project.
+## Getting Started
 
-It is open source, and you can use it to jump-start your project.
+First, run the development server:
 
-It is built with Next.js 15 and Strapi 5 
-
-## What is Next.js?
-Next.js is a framework built on top of React that provides additional features and optimizations for web development. 
-
-It offers tools and conventions that make creating high-performance, SEO-friendly web applications easier.
-
-**Key Features**
-- App Router allows you to create and manage routes in your application easily and intuitively.
-
-- Server Components allow parts of your application to be rendered on the server, which offers several benefits: Reduced client-side JavaScript, leading to improved performance and security, as sensitive operations can be kept on the server.
-
-- Server Actions are a new feature that allows you to define and execute server-side code directly from your components, enabling Seamless integration of server-side logic within your application.
-
-You can learn more about Next.js [here](https://nextjs.org/docs)
-
-## What is Strapi?
-Strapi is a flexible, customizable, headless CMS built with Node.js.
-
-It offers a user-friendly interface for content management while allowing developers to build and design the front end independently. 
-
-As a headless CMS, Strapi separates the content management from the presentation layer, delivering content via APIs.
-
-**Powerful Combination**
-Next.js and Strapi together create a robust solution for building dynamic websites. 
-
-Next.js handles the front with server-side rendering capabilities, while Strapi manages the backend content.
-
-**Key Benefits**
-
-- **Improved SEO and Performance**: Next.js's server-side rendering capabilities, combined with Strapi's content management, enhance SEO and website speed. 
-
-- **Flexibility and Customization**: Strapi's adaptability complements Next.js's versatility, allowing developers to create highly customized web applications and allowing for complete control over both the content structure and the frontend presentation.
-
-- **API-First Approach**: Strapi provides a robust, out-of-the-box API that makes fetching and managing content in your Next.js application easy. 
-
-This API-first approach enables you to build scalable and efficient web applications.
-
-- **Developer-Friendly**: Strapi and Next.js are built with JavaScript/Node.js, providing a consistent development experience. This familiarity can lead to increased productivity and easier maintenance.
-
-## What's New in Strapi 5
-Strapi 5 introduces several powerful features to enhance content management and development efficiency.
-
-- **Draft & Publish**: with a new user-friendly interface, Strapi 5 now separates Draft and Published content into distinct tabs, allowing you to save and publish content in a single action. This feature reduces the risk of publishing errors and makes collaboration smoother than ever.
-
-- **Content History**: Strapi 5 allows you to quickly revert to previous versions of your content, helping you avoid data loss, inefficiency, and workflow disruptions. If you ever need to go back to an earlier version of a page, it's now just a click away.
-
-- **100% TypeScript**: Strapi 5 is now entirely written in TypeScript, offering the benefits of type safety and easier maintainability. This means more robust code, quicker bug detection, and a smoother experience for collaborative projects.
-
-- **Vite Bundling**: Strapi 5 offers Vite bundling support, which speeds up build times. This enhancement improves performance, making your development process more efficient.
-
-- **Plugin CLI**: Strapi 5 introduces an intuitive Plugin CLI, providing a suite of commands that make plugin development more accessible than ever. This tool simplifies creating and managing plugins, saving developers valuable time.
-
-- **New API Format**: Strapi 5's new API format is cleaner and more intuitive, simplifying your interactions with the CMS. It also reduces payload sizes, leading to faster and more efficient data handling.
-Strapi 5 is your go-to open-source headless CMS for modern API creation and seamless content collaboration. It makes coding and publishing more intuitive.
-
-
-## Getting Started With The Project Demo
-
-You can check out the [following video](https://www.youtube.com/watch?v=RSdRM4gw218) or follow the steps outlined below.
-
-**Step 1**: clone the project
-The first step is to clone the project to your local computer.
-
-I will be using GitHub CLI for this example. Let's start by cloning the project with the following command.
-
-``` bash
-  git clone https://github.com/PaulBratslavsky/strapi-5-next-js-starter-project.git
-```
-**Step 2**: Setup Database (PostgreSQL/NeonDB)
-
-This project now uses PostgreSQL as the database. You'll need to set up a PostgreSQL database (we recommend NeonDB for easy setup).
-
-1. **Option A - Using NeonDB (Recommended):**
-   - Sign up at [NeonDB](https://neon.tech)
-   - Create a new project/database
-   - Copy the connection string from the dashboard
-
-2. **Option B - Local PostgreSQL:**
-   - Install PostgreSQL locally
-   - Create a database for your project
-
-3. **Configure Environment Variables:**
-   - Copy `server/.env.example` to `server/.env`
-   - Update the `DATABASE_URL` with your PostgreSQL connection string:
-   ```
-   DATABASE_URL=postgresql://username:password@host:5432/database?sslmode=require
-   ```
-
-**Step 3**: run the setup script
-
-Once you have the project on your local machine and configured the database, let's install the project dependencies and seed them with example data.
-
-We will run the following command from the root of our project.
-
-``` bash
-  pnpm setup
+```bash
+npm run dev
+# or
+yarn dev
+# or
+pnpm dev
+# or
+bun dev
 ```
 
-And to seed the data.
+Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
-``` bash
-  pnpm seed
-```
+You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
 
-Finally you can run `pnpm dev` in the root of our project.
+This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
 
-This will start both our `backend` and `frontend`.
+## Learn More
 
-Before navigating to our frontend, you will be prompted to create your first **Strapi Admin** user.
+To learn more about Next.js, take a look at the following resources:
 
-You can check out the `package.json` file for more details on what the script will do.
+- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
+- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
 
-If you have any questions about the project, please leave a comment or stop by Strapi's "open office" hours Monday through Friday at 12:30 PM CST. 
+You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+
+## Deploy on Vercel
+
+The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+
+Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
