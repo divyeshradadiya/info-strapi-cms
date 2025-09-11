@@ -1,4 +1,5 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
+import { getStrapiURL } from '@/lib/utils';
 
 // Toast utility function
 const showToast = (message: string, type: 'success' | 'error' = 'success') => {
@@ -37,7 +38,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
 
   // Import adminLogin here to avoid circular dependencies
   const adminLogin = async (email: string, password: string): Promise<string> => {
-    const API_BASE = process.env.NEXT_PUBLIC_STRAPI_URL || 'http://localhost:1337';
+    const API_BASE = getStrapiURL();
 
     const response = await fetch(`${API_BASE}/admin/login`, {
       method: 'POST',
@@ -95,7 +96,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
 
     try {
       // Simple token validation by making a test request
-      const API_BASE = process.env.NEXT_PUBLIC_STRAPI_URL || 'http://localhost:1337';
+      const API_BASE = getStrapiURL();
       const response = await fetch(`${API_BASE}/content-manager/collection-types/api::post.post?pagination[page]=1&pagination[pageSize]=1`, {
         headers: {
           'Authorization': `Bearer ${token}`,

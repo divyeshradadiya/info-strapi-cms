@@ -1,6 +1,8 @@
 // API service for Posts Manager - handles all Strapi API interactions
 
-const API_BASE = process.env.NEXT_PUBLIC_STRAPI_URL || 'http://localhost:1337';
+import { getStrapiURL } from "@/lib/utils";
+
+const API_BASE = getStrapiURL()
 
 // Types
 export interface Category {

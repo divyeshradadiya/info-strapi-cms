@@ -6,7 +6,11 @@ export function cn(...inputs: ClassValue[]) {
 }
 
 export function getStrapiURL() {
-  return process.env.STRAPI_BASE_URL ?? "http://localhost:1337";
+  const url = process.env.STRAPI_BASE_URL ?? "http://localhost:1337";
+  if (!url.startsWith('http://') && !url.startsWith('https://')) {
+    return `https://${url}`;
+  }
+  return url;
 }
 
 export function getStrapiMedia(url: string | null) {

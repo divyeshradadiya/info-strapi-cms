@@ -5,6 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Edit, Eye, Trash2, Calendar, Tag } from 'lucide-react';
 import { Post } from '@/data/services/posts-api';
+import { getStrapiURL } from '@/lib/utils';
 
 interface PostCardProps {
   post: Post;
@@ -19,7 +20,7 @@ export const PostCard: React.FC<PostCardProps> = ({
   onDelete,
   onTogglePublish,
 }) => {
-  const API_BASE = process.env.NEXT_PUBLIC_STRAPI_URL || 'http://localhost:1337';
+  const API_BASE = getStrapiURL()
 
   return (
     <Card className="overflow-hidden hover:shadow-lg transition-shadow bg-card border-border">
