@@ -39,6 +39,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   // Import adminLogin here to avoid circular dependencies
   const adminLogin = async (email: string, password: string): Promise<string> => {
     const API_BASE = getStrapiURL();
+    console.log('Auth login using URL:', API_BASE);
 
     const response = await fetch(`${API_BASE}/admin/login`, {
       method: 'POST',
