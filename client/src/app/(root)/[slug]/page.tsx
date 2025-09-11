@@ -3,12 +3,13 @@ import { draftMode } from "next/headers";
 import { getAllPagesSlugs, getPageBySlug } from "@/data/loaders";
 import { BlockRenderer } from "@/components/block-renderer";
 
-export async function generateStaticParams() {
-  const pages = await getAllPagesSlugs();
-  return pages.data.map((page) => ({
-    slug: page.slug,
-  }));
-}
+// Remove generateStaticParams to make this a dynamic route
+// export async function generateStaticParams() {
+//   const pages = await getAllPagesSlugs();
+//   return pages.data.map((page) => ({
+//     slug: page.slug,
+//   }));
+// }
 
 
 interface PageProps {
