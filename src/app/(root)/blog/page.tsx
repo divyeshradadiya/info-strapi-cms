@@ -63,14 +63,16 @@ export default async function BlogRoute({ searchParams }: PageProps) {
               <Link href={"/blog/" + item.slug} key={item.documentId}>
                 <Card className="h-full shadow-lg border-none">
                   <CardContent className="flex h-full flex-col items-start gap-5 px-0">
-                    <div className="relative h-52 w-full">
-                      <StrapiImage
-                        alt={item.image?.alternativeText ? item.image.alternativeText : item.title}
-                        src={item.image.url}
-                        fill
-                        className="object-cover rounded-t-lg"
-                      />
-                    </div>
+                    {item.image?.url ? (
+                      <div className="relative h-52 w-full">
+                        <StrapiImage
+                          alt={item.image?.alternativeText ? item.image.alternativeText : item.title}
+                          src={item.image.url}
+                          fill
+                          className="object-cover rounded-t-lg"
+                        />
+                      </div>
+                    ) : null}
                     <div className="flex flex-1 flex-col gap-4 px-5">
                       <h4 className="text-lg font-semibold">{item.title}</h4>
                       <p className="mb-auto text-muted-foreground">{item.description}</p>
