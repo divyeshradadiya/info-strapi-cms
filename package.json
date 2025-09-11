@@ -1,0 +1,26 @@
+{
+  "name": "strapi-next-starter",
+  "version": "1.0.0",
+  "description": "Strapi starter project with Next.js",
+  "type": "module",
+  "scripts": {
+  "client": "pnpm --dir ../client dev",
+  "server": "pnpm --dir ../server dev",
+  "setup:client": "cd client && pnpm install && node --loader ts-node/esm ../copy-env.mts ./",
+  "setup:server": "cd server && pnpm install && node --loader ts-node/esm ../copy-env.mts ./",
+  "setup": "pnpm install && pnpm setup:client && pnpm setup:server",
+  "dev": "pnpm concurrently \"cd server && pnpm develop\" \"npx wait-on http://localhost:1337 && cd client && pnpm dev\"",
+  "seed": "cd server && pnpm strapi import -f ../seed-data.tar.gz --force",
+  "export": "cd server && pnpm strapi export --no-encrypt -f ../seed-data",
+    "repo:upstream": "git fetch upstream && git merge upstream/main"
+  },
+  "dependencies": {
+    "@types/node": "^22.5.2",
+    "concurrently": "^8.2.2",
+    "typescript": "^5.0.0",
+    "wait-on": "^8.0.1"
+  },
+  "devDependencies": {
+    "ts-node": "^10.9.2"
+  }
+}
