@@ -121,7 +121,14 @@ export const PostForm: React.FC<PostFormProps> = ({
           className="min-h-[300px]"
           outputFormat="html"
         /> */}
-        <MarkdownText content={formData.content} />
+           <Textarea
+          id="content"
+          value={formData.content}
+          onChange={(e) => setFormData(prev => ({ ...prev, content: e.target.value }))}
+          placeholder="Write your post content here... (Note: Blocks/rich content editing available in Strapi admin)"
+          rows={6}
+        />
+
       </div>
 
       <div className="space-y-2">
