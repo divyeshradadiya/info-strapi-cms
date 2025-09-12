@@ -3,9 +3,10 @@
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Edit, Eye, Trash2, Calendar, Tag } from 'lucide-react';
+import { Edit, Eye, EyeOff, Trash2, Calendar, Tag, ArrowUpRight } from 'lucide-react';
 import { Post } from '@/data/services/posts-api';
 import { getStrapiURL } from '@/lib/utils';
+import { useRouter } from 'next/navigation';
 
 interface PostCardProps {
   post: Post;
@@ -13,7 +14,7 @@ interface PostCardProps {
   onDelete: (post: Post) => void;
   onTogglePublish: (post: Post) => void;
 }
-
+  
 export const PostCard: React.FC<PostCardProps> = ({
   post,
   onEdit,
@@ -21,6 +22,7 @@ export const PostCard: React.FC<PostCardProps> = ({
   onTogglePublish,
 }) => {
   const API_BASE = getStrapiURL()
+  const router = useRouter()
 
   return (
     <Card className="overflow-hidden hover:shadow-lg transition-shadow bg-card border-border">
@@ -87,6 +89,14 @@ export const PostCard: React.FC<PostCardProps> = ({
               title="Delete"
             >
               <Trash2 className="w-4 h-4" />
+            </Button>
+            <Button
+              size="sm"
+              variant="outline"
+              onClick={() => router.push(`/blog/${post.slug}`)}
+              title="View Blog"
+            >
+              {post.status === 'published' ? <ArrowUpRight className="w-4 h-4" /> : <ArrowUpRight className="w-4 h-4" />}
             </Button>
           </div>
           <Badge
