@@ -6,7 +6,7 @@ import { MobileNavbar } from "@/components/custom/mobile-navbar";
 import { ThemeToggle } from "@/components/layout/theme-toggle";
 
 export function Header() {
-  const logoText = "NewsHub";
+  const logoText = "InfoOnlyHub";
 
   const navItems = [
     { text: "Home", href: "/" },
@@ -14,7 +14,7 @@ export function Header() {
   ];
 
   return (
-    <header className="flex items-center justify-between gap-10 py-4 px-10 sm:px-5 bg-card ">
+    <header className="flex items-center justify-between gap-10 py-4 px-10 sm:px-5 bg-card font-grotesk">
       {/* Logo */}
       <Link href="/" className="flex items-center gap-3">
         <svg viewBox="0 0 238 238" fill="none" className="size-6 text-primary">

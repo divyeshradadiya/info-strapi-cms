@@ -9,6 +9,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Badge } from '@/components/ui/badge';
 import { MarkdownEditor } from '@/components/ui/markdown-editor';
 import { Post, PostFormData, Category } from '@/data/services/posts-api';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { MarkdownText } from '../custom/markdown-text';
 
 interface PostFormProps {
@@ -114,21 +115,32 @@ export const PostForm: React.FC<PostFormProps> = ({
 
       <div className="space-y-2">
         <Label htmlFor="content">Content</Label>
-        {/* <MarkdownEditor
-          content={formData.content}
-          onChange={(content) => setFormData(prev => ({ ...prev, content }))}
-          placeholder="Write your post content here using markdown..."
-          className="min-h-[300px]"
-          outputFormat="html"
-        /> */}
-           <Textarea
-          id="content"
-          value={formData.content}
-          onChange={(e) => setFormData(prev => ({ ...prev, content: e.target.value }))}
-          placeholder="Write your post content here... (Note: Blocks/rich content editing available in Strapi admin)"
-          rows={6}
-        />
-
+        <Tabs defaultValue="content" className="w-full">
+          <TabsList className="grid w-full grid-cols-2">
+            <TabsTrigger value="content">Content</TabsTrigger>
+            <TabsTrigger value="preview">Preview</TabsTrigger>
+          </TabsList>
+          <TabsContent value="content" className="mt-4">
+            <div className="max-h-[56vh] overflow-auto">
+              <Textarea
+              id="content"
+              value={formData.content}
+              onChange={(e) => setFormData(prev => ({ ...prev, content: e.target.value }))}
+              placeholder="Write your post content here using markdown..."
+              rows={10}
+              className="min-h-[300px] h-full resize-none break-words"
+              style={{ wordBreak: 'break-word', whiteSpace: 'pre-wrap' }}
+              />
+            </div>
+          </TabsContent>
+          <TabsContent value="preview" className="mt-4">
+            <div className="max-h-[56vh] overflow-auto max-w-2xl">
+              <div className="border rounded-md p-4 bg-muted/20">
+                <MarkdownText className="prose break-words" content={formData.content || "Start writing to see the preview..."} />
+              </div>
+            </div>
+          </TabsContent>
+        </Tabs>
       </div>
 
       <div className="space-y-2">

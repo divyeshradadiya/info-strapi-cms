@@ -22,6 +22,12 @@ const fontHeading = Nunito({
   subsets: ["latin"],
 });
 
+const fontGrotesk = Space_Grotesk({
+  variable: "--font-grotesk",
+  subsets: ["latin"],
+  weight: ["400", "500", "600", "700"],
+});
+
 export const metadata: Metadata = {
   title: {
     default: "NewsHub - Latest News & Blog Platform",
@@ -60,7 +66,8 @@ export default async function RootLayout({
         className={cn(
           "min-h-screen font-sans antialiased",
           fontSans.variable,
-          fontHeading.variable
+          fontHeading.variable,
+          fontGrotesk.variable
         )}
       >
         <ThemeProvider

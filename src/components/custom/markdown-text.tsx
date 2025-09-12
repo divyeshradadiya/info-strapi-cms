@@ -17,7 +17,7 @@ This is <ins>underlined</ins> text
 Press <kbd>mod+c</kbd>
 `;
 
-export const MarkdownText = ({ content }: { content?: string }) => {
+export const MarkdownText = ({ content, className }: { content?: string; className?: string }) => {
   const options: MarkdownProps = {
     children: content || textStylesContent,
     fontSize: 18,
@@ -26,5 +26,9 @@ export const MarkdownText = ({ content }: { content?: string }) => {
     marginMultiple: 2,
   };
 
-  return <Markdown {...options} />;
+  return (
+    <div className={className}>
+      <Markdown {...options} />
+    </div>
+  );
 };
