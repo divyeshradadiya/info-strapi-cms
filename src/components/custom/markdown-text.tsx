@@ -20,7 +20,7 @@ Press <kbd>mod+c</kbd>
 export const MarkdownText = ({ content }: { content?: string }) => {
   const options: MarkdownProps = {
     children: content || textStylesContent,
-    fontSize: 16,
+    fontSize: 18,
     headerMultiple: 1,
     lineHeight: 1.8,
     marginMultiple: 2,

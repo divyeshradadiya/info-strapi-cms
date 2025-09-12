@@ -7,9 +7,6 @@ export function cn(...inputs: ClassValue[]) {
 
 export function getStrapiURL() {
   const url = process.env.NEXT_PUBLIC_STRAPI_BASE_URL || process.env.STRAPI_BASE_URL || "http://localhost:1337";
-  console.log('NEXT_PUBLIC_STRAPI_BASE_URL env var:', process.env.NEXT_PUBLIC_STRAPI_BASE_URL);
-  console.log('STRAPI_BASE_URL env var:', process.env.STRAPI_BASE_URL);
-  console.log('Resolved Strapi URL:', url);
   if (!url.startsWith('http://') && !url.startsWith('https://')) {
     return `https://${url}`;
   }

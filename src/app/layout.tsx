@@ -1,14 +1,20 @@
 import "./globals.css";
 
 import type { Metadata } from "next";
-import { Inter, Nunito } from "next/font/google";
+import { Inter, Manrope, Nunito, Open_Sans, Poppins, Roboto_Slab, Space_Grotesk } from "next/font/google";
 import { ThemeProvider } from "next-themes";
 import { cn } from "@/lib/utils";
 import { Header, Footer } from "@/components/layout";
 
-const fontSans = Inter({
+// const fontSans = Inter({
+//   variable: "--font-sans",
+//   subsets: ["latin"],
+// });
+
+const fontSans = Poppins({
   variable: "--font-sans",
   subsets: ["latin"],
+  weight: ["400", "500", "600", "700"],
 });
 
 const fontHeading = Nunito({

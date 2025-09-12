@@ -49,9 +49,10 @@ export default async function SinglePost({ params }: PageProps) {
   const blocks = post?.blocks || [];
 
   console.log(blocks, "blocks");
+  console.log(post, "post");
 
   return (
-    <article>
+    <article className="mb-20">
       <div>
         <header className="container mx-auto py-10">
           <h1 className="text-6xl font-bold tracking-tighter sm:text-5xl mb-4">
