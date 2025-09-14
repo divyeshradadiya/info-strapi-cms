@@ -1,8 +1,9 @@
-import sdk from "@/lib/sdk";
+import { publicSdk } from "@/lib/sdk";
 const PAGE_SIZE = 3;
+const ADMIN_PAGE_SIZE = 9; // For content manager
 
 export async function getGlobalPageData() {
-  const landingPage = await sdk.single("global").find({
+  const landingPage = await publicSdk.single("global").find({
     populate: {
       topNav: {
         populate: "*",
@@ -16,7 +17,7 @@ export async function getGlobalPageData() {
 }
 
 export async function getLandingPage() {
-  const landingPage = await sdk.single("landing-page").find({
+  const landingPage = await publicSdk.single("landing-page").find({
     populate: {
       blocks: {
         on: {
@@ -61,14 +62,14 @@ export async function getLandingPage() {
 }
 
 export async function getAllPagesSlugs() {
-  const pages = await sdk.collection("pages").find({
+  const pages = await publicSdk.collection("pages").find({
     fields: ["slug"],
   });
   return pages;
 }
 
 export async function getPageBySlug(slug: string, status: string) {
-  const page = await sdk.collection("pages").find({
+  const page = await publicSdk.collection("pages").find({
     populate: {
       blocks: {
         on: {
@@ -110,14 +111,14 @@ export async function getPageBySlug(slug: string, status: string) {
 }
 
 export async function getCategories() {
-  const categories = await sdk.collection("categories").find({
+  const categories = await publicSdk.collection("categories").find({
     fields: ["text", "description"],
   });
   return categories;
 }
 
 export async function getBlogPostBySlug(slug: string, status: string) {
-  const post = await sdk.collection("posts").find({
+  const post = await publicSdk.collection("posts").find({
     populate: {
       image: {
         fields: ["url", "alternativeText", "name"],
@@ -154,7 +155,7 @@ export async function getBlogPosts(
   queryString: string,
   category: string
 ) {
-  const posts = await sdk.collection("posts").find({
+  const posts = await publicSdk.collection("posts").find({
     populate: {
       image: {
         fields: ["url", "alternativeText", "name"],
@@ -194,6 +195,33 @@ export async function getBlogPosts(
 
     pagination: {
       pageSize: PAGE_SIZE,
+      page: page,
+    },
+  });
+  return posts;
+}
+
+export async function getBlogPostsForAdmin(
+  page: number,
+  queryString: string,
+  category: string
+) {
+  const posts = await publicSdk.collection("posts").find({
+    populate: {
+      image: {
+        fields: ["url", "alternativeText", "name"],
+      },
+      category: {
+        fields: ["text"],
+      },
+    },
+    filters: {
+      title: { $containsi: queryString },
+      ...(category && { category: { text: { $eq: category } } }),
+    },
+    sort: ['createdAt:desc'], // Sort by creation date, newest first
+    pagination: {
+      pageSize: ADMIN_PAGE_SIZE, // 9 posts per page
       page: page,
     },
   });

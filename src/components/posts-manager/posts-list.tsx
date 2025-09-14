@@ -163,6 +163,11 @@ export const PostsList: React.FC<PostsListProps> = ({
         </div>
       </div>
 
+      {/* Posts Stats */}
+      <div className="mb-4 text-sm text-muted-foreground">
+        Showing {posts.length} posts (9 per page) • Sorted by newest first
+      </div>
+
       {/* Posts Grid */}
       {loading ? (
         <div className="text-center py-12">

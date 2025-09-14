@@ -1,6 +1,7 @@
 'use client';
 
 import { getStrapiURL } from "@/lib/utils";
+import { getPostsServerAction, getCategoriesServerAction, getPostBySlugServerAction, createPostServerAction, updatePostServerAction, deletePostServerAction, createCategoryServerAction, updateCategoryServerAction, deleteCategoryServerAction } from "@/data/actions/content-manager";
 
 const BASE_URL = getStrapiURL();
 const API_URL = `${BASE_URL}/api`;
@@ -128,7 +129,7 @@ class ContentManagerService {
     
     return mapping[contentTypeUid] || contentTypeUid.split('.').pop() + 's';
   }
-  // Get content items for a specific content type - simplified to match blog pages exactly
+  // Get content items for a specific content type - using the exact same functions as blog pages
   async getContentItems(contentType: string, params?: {
     page?: number;
     pageSize?: number;
@@ -137,67 +138,67 @@ class ContentManagerService {
     populate?: string;
   }): Promise<ApiResponse<ContentItem[]>> {
     try {
-      const collectionName = this.getCollectionName(contentType);
-      
-      // Create the exact same URL structure as your working blog pages
-      let url = `${BASE_URL}/api/${collectionName}`;
-      
-      // Build query parameters exactly like your blog loader does
-      const queryParams = [];
-      
-      // Add populate parameters (same as blog)
-      queryParams.push('populate[image][fields][0]=url');
-      queryParams.push('populate[image][fields][1]=alternativeText');
-      queryParams.push('populate[image][fields][2]=name');
-      queryParams.push('populate[category][fields][0]=text');
-      
-      // Add pagination
-      if (params?.page) {
-        queryParams.push(`pagination[page]=${params.page}`);
-      }
-      if (params?.pageSize) {
-        queryParams.push(`pagination[pageSize]=${params.pageSize}`);
-      }
-      
-      // Add filters
-      if (params?.filters?.title) {
-        queryParams.push(`filters[title][$containsi]=${encodeURIComponent(params.filters.title)}`);
-      }
-      
-      if (queryParams.length > 0) {
-        url += '?' + queryParams.join('&');
-      }
-      
-      console.log('Content Manager API URL:', url);
-      
-      const response = await fetch(url, {
-        method: 'GET',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      });
+      // Use the exact same functions that work for blog pages
+      if (contentType === 'api::post.post') {
+        const page = params?.page || 1;
+        const query = params?.filters?.title || '';
+        const category = params?.filters?.category || '';
 
-      if (!response.ok) {
-        console.error('API Response not OK:', response.status, response.statusText);
-        throw new Error(`Failed to fetch ${contentType}: ${response.status}`);
+        const result = await getPostsServerAction(page, query, category);
+
+        // Transform the result to match our ContentItem interface
+        const transformedData = result.data.map((item: any) => ({
+          id: item.id,
+          documentId: item.documentId,
+          attributes: item,
+          createdAt: item.createdAt,
+          updatedAt: item.updatedAt,
+          publishedAt: item.publishedAt,
+        }));
+
+        return {
+          data: transformedData,
+          meta: result.meta,
+        };
       }
 
-      const result = await response.json();
-      console.log('API Response:', result);
-      
-      // Transform response to match our ContentItem interface
-      const transformedData = result.data.map((item: any) => ({
-        id: item.id,
-        documentId: item.documentId,
-        attributes: item, // Strapi 5 flattened format
-        createdAt: item.createdAt,
-        updatedAt: item.updatedAt,
-        publishedAt: item.publishedAt,
-      }));
-      
+      if (contentType === 'api::category.category') {
+        const result = await getCategoriesServerAction();
+
+        // Transform categories to match ContentItem interface
+        const transformedData = result.data.map((item: any) => ({
+          id: item.id,
+          documentId: item.documentId,
+          attributes: item,
+          createdAt: item.createdAt,
+          updatedAt: item.updatedAt,
+          publishedAt: item.publishedAt,
+        }));
+
+        return {
+          data: transformedData,
+          meta: {
+            pagination: {
+              page: 1,
+              pageSize: result.data.length,
+              pageCount: 1,
+              total: result.data.length,
+            },
+          },
+        };
+      }
+
+      // For other content types, return empty array
       return {
-        data: transformedData,
-        meta: result.meta,
+        data: [],
+        meta: {
+          pagination: {
+            page: 1,
+            pageSize: 0,
+            pageCount: 1,
+            total: 0,
+          },
+        },
       };
     } catch (error) {
       console.error(`Error fetching ${contentType}:`, error);
@@ -205,96 +206,153 @@ class ContentManagerService {
     }
   }
 
-  // Get single content item using direct fetch to public API
+  // Get single content item using the exact same function as blog pages
   async getContentItem(contentType: string, id: string): Promise<{ data: ContentItem }> {
     try {
-      const collectionName = this.getCollectionName(contentType);
-      
-      const url = `${BASE_URL}/api/${collectionName}/${id}?populate=*`;
-      
-      const response = await fetch(url, {
-        method: 'GET',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      });
+      if (contentType === 'api::post.post') {
+        // For posts, we need to get by slug, not ID
+        // First get all posts and find the one with matching ID
+        const result = await getPostsServerAction(1, '', '');
+        const post = result.data.find((item: any) => item.id === parseInt(id));
 
-      if (!response.ok) {
-        throw new Error(`Failed to fetch ${contentType} item: ${response.status}`);
+        if (!post) {
+          throw new Error(`Post with ID ${id} not found`);
+        }
+
+        return {
+          data: {
+            id: post.id,
+            documentId: post.documentId,
+            attributes: post,
+            createdAt: post.createdAt,
+            updatedAt: post.updatedAt,
+            publishedAt: post.publishedAt,
+          },
+        };
       }
 
-      const result = await response.json();
-
-      // Transform response to match our ContentItem interface
-      const transformedData = {
-        id: result.data.id,
-        documentId: result.data.documentId,
-        attributes: result.data,
-        createdAt: result.data.createdAt,
-        updatedAt: result.data.updatedAt,
-        publishedAt: result.data.publishedAt,
-      };
-
-      return { data: transformedData };
+      // For other content types, return error for now
+      throw new Error(`Getting individual ${contentType} items not implemented yet`);
     } catch (error) {
       console.error(`Error fetching ${contentType} item:`, error);
       throw error;
     }
   }
 
-  // Create content item
+  // Create content item using the exact same SDK approach
   async createContentItem(contentType: string, data: Record<string, any>): Promise<{ data: ContentItem }> {
     try {
-      const response = await fetch(`${API_URL}/${contentType}`, {
-        method: 'POST',
-        headers: this.getHeaders(),
-        body: JSON.stringify({ data }),
-      });
-
-      if (!response.ok) {
-        throw new Error(`Failed to create ${contentType} item`);
+      if (contentType === 'api::post.post') {
+        const result = await createPostServerAction(data);
+        const item = result.data as any;
+        return {
+          data: {
+            id: item.id,
+            documentId: item.documentId,
+            attributes: item,
+            createdAt: item.createdAt,
+            updatedAt: item.updatedAt,
+            publishedAt: item.publishedAt,
+          },
+        };
       }
 
-      return await response.json();
+      if (contentType === 'api::category.category') {
+        const result = await createCategoryServerAction(data);
+        const item = result.data as any;
+        return {
+          data: {
+            id: item.id,
+            documentId: item.documentId,
+            attributes: item,
+            createdAt: item.createdAt,
+            updatedAt: item.updatedAt,
+            publishedAt: item.publishedAt,
+          },
+        };
+      }
+
+      throw new Error(`Creating ${contentType} items not implemented yet`);
     } catch (error) {
       console.error(`Error creating ${contentType} item:`, error);
       throw error;
     }
   }
 
-  // Update content item
+  // Update content item using the exact same SDK approach
   async updateContentItem(contentType: string, id: string, data: Record<string, any>): Promise<{ data: ContentItem }> {
     try {
-      const response = await fetch(`${API_URL}/${contentType}/${id}`, {
-        method: 'PUT',
-        headers: this.getHeaders(),
-        body: JSON.stringify({ data }),
-      });
-
-      if (!response.ok) {
-        throw new Error(`Failed to update ${contentType} item`);
+      if (contentType === 'api::post.post') {
+        const result = await updatePostServerAction(id, data);
+        const item = result.data as any;
+        return {
+          data: {
+            id: item.id,
+            documentId: item.documentId,
+            attributes: item,
+            createdAt: item.createdAt,
+            updatedAt: item.updatedAt,
+            publishedAt: item.publishedAt,
+          },
+        };
       }
 
-      return await response.json();
+      if (contentType === 'api::category.category') {
+        const result = await updateCategoryServerAction(id, data);
+        const item = result.data as any;
+        return {
+          data: {
+            id: item.id,
+            documentId: item.documentId,
+            attributes: item,
+            createdAt: item.createdAt,
+            updatedAt: item.updatedAt,
+            publishedAt: item.publishedAt,
+          },
+        };
+      }
+
+      throw new Error(`Updating ${contentType} items not implemented yet`);
     } catch (error) {
       console.error(`Error updating ${contentType} item:`, error);
       throw error;
     }
   }
 
-  // Delete content item
+  // Delete content item using the exact same SDK approach
   async deleteContentItem(contentType: string, id: string): Promise<{ data: ContentItem }> {
     try {
-      const response = await fetch(`${API_URL}/${contentType}/${id}`, {
-        method: 'DELETE',
-        headers: this.getHeaders(),
-      });
-
-      if (!response.ok) {
-        throw new Error(`Failed to delete ${contentType} item`);
+      if (contentType === 'api::post.post') {
+        const result = await deletePostServerAction(id);
+        const item = result.data as any;
+        return {
+          data: {
+            id: item.id,
+            documentId: item.documentId,
+            attributes: item,
+            createdAt: item.createdAt,
+            updatedAt: item.updatedAt,
+            publishedAt: item.publishedAt,
+          },
+        };
       }
 
-      return await response.json();
+      if (contentType === 'api::category.category') {
+        const result = await deleteCategoryServerAction(id);
+        const item = result.data as any;
+        return {
+          data: {
+            id: item.id,
+            documentId: item.documentId,
+            attributes: item,
+            createdAt: item.createdAt,
+            updatedAt: item.updatedAt,
+            publishedAt: item.publishedAt,
+          },
+        };
+      }
+
+      throw new Error(`Deleting ${contentType} items not implemented yet`);
     } catch (error) {
       console.error(`Error deleting ${contentType} item:`, error);
       throw error;

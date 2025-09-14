@@ -7,19 +7,78 @@ import { LoadingScreen } from './loading-screen';
 import { PostsHeader } from './posts-header';
 import { PostsList } from './posts-list';
 import {
-  loadPosts,
-  loadCategories,
-  createPost,
-  updatePost,
-  deletePost,
-  publishPost,
-  unpublishPost,
-  createCategory,
-  type Post,
-  type Category,
-  type PostFormData,
-  type CategoryFormData
-} from '@/data/services/posts-api';
+  getPostsServerAction,
+  getCategoriesServerAction,
+  createPostServerAction,
+  updatePostServerAction,
+  deletePostServerAction,
+  createCategoryServerAction,
+  updateCategoryServerAction,
+  deleteCategoryServerAction,
+  publishPostServerAction,
+  unpublishPostServerAction
+} from '@/data/actions/content-manager';
+
+// Types
+interface Category {
+  id: number;
+  documentId: string;
+  name: string;
+  slug: string;
+  createdAt: string;
+  updatedAt: string;
+  status: string;
+}
+
+interface Post {
+  id: number;
+  documentId: string;
+  title: string;
+  description?: string;
+  content?: string;
+  slug: string;
+  publishedAt?: string | null;
+  createdAt: string;
+  updatedAt: string;
+  status: string;
+  category?: {
+    id: number;
+    documentId: string;
+    text: string;
+    description?: string;
+    createdAt: string;
+    updatedAt: string;
+    publishedAt?: string | null;
+  };
+  image?: {
+    id: number;
+    documentId: string;
+    name: string;
+    alternativeText?: string;
+    caption?: string;
+    width: number;
+    height: number;
+    url: string;
+    mime: string;
+    size: number;
+    createdAt: string;
+    updatedAt: string;
+  };
+}
+
+interface PostFormData {
+  title: string;
+  description: string;
+  content: string;
+  slug: string;
+  categoryId: string;
+  image?: File;
+}
+
+interface CategoryFormData {
+  name: string;
+  slug: string;
+}
 
 // Toast utility function
 const showToast = (message: string, type: 'success' | 'error' = 'success') => {
@@ -47,61 +106,83 @@ const PostsManager = () => {
 
   // Load data functions
   const loadPostsData = useCallback(async (page = 1, searchTerm = '') => {
-    if (!authToken) return;
-
     setLoading(true);
     try {
-      const { posts: postsData, pagination } = await loadPosts(authToken, page, searchTerm);
+      const result = await getPostsServerAction(page, searchTerm, '');
 
-      setPosts(postsData || []);
-      setCurrentPage(pagination?.page || 1);
-      setTotalPages(pagination?.pageCount || 1);
+      // Transform the data to match the expected format
+      const transformedPosts = result.data.map((item: any) => ({
+        id: item.id,
+        documentId: item.documentId,
+        title: item.title,
+        description: item.description,
+        content: item.content,
+        slug: item.slug,
+        publishedAt: item.publishedAt,
+        createdAt: item.createdAt,
+        updatedAt: item.updatedAt,
+        status: item.publishedAt ? 'published' : 'draft',
+        image: item.image,
+        category: item.category,
+      }));
+
+      setPosts(transformedPosts || []);
+      setCurrentPage(result.meta?.pagination?.page || 1);
+      setTotalPages(result.meta?.pagination?.pageCount || 1);
     } catch (error) {
       console.error('Load posts error:', error);
       showToast('Failed to load posts', 'error');
     } finally {
       setLoading(false);
     }
-  }, [authToken]);
+  }, []);
 
   const loadCategoriesData = useCallback(async () => {
-    if (!authToken) return;
-
     try {
-      const categoriesData = await loadCategories(authToken);
-      setCategories(categoriesData || []);
+      const result = await getCategoriesServerAction();
+
+      // Transform the data to match the expected format
+      const transformedCategories = result.data.map((item: any) => ({
+        id: item.id,
+        documentId: item.documentId,
+        name: item.text, // Map 'text' to 'name'
+        slug: item.text?.toLowerCase().replace(/\s+/g, '-'), // Generate slug from text
+        createdAt: item.createdAt,
+        updatedAt: item.updatedAt,
+        status: 'published', // Default status
+      }));
+
+      setCategories(transformedCategories || []);
     } catch (error) {
       console.error('Load categories error:', error);
       showToast('Failed to load categories', 'error');
     }
-  }, [authToken]);
+  }, []);
 
   // Load initial data when authenticated
   useEffect(() => {
-    if (isAuthenticated && authToken) {
+    if (isAuthenticated) {
       loadPostsData();
       loadCategoriesData();
     }
-  }, [isAuthenticated, authToken, loadPostsData, loadCategoriesData]);
+  }, [isAuthenticated, loadPostsData, loadCategoriesData]);
 
   // CRUD operations
   const handleCreatePost = useCallback(async (formData: PostFormData) => {
     try {
-      const result = await createPost(authToken, formData);
+      const postData = {
+        title: formData.title,
+        description: formData.description,
+        content: formData.content,
+        slug: formData.slug,
+        category: formData.categoryId ? parseInt(formData.categoryId) : undefined,
+        // Note: Image upload would need additional handling
+      };
 
-      // Auto-publish the newly created post
-      if (result.documentId) {
-        try {
-          await publishPost(authToken, result.documentId);
-          showToast('Post created and published successfully!', 'success');
-        } catch (publishError) {
-          console.error('Auto-publish error:', publishError);
-          showToast('Post created as draft (auto-publish failed)', 'success');
-        }
-      } else {
-        showToast('Post created successfully!', 'success');
-      }
+      const result = await createPostServerAction(postData);
+      const createdPost = result.data as any;
 
+      showToast('Post created successfully!', 'success');
       loadPostsData();
     } catch (error) {
       console.error('Create post error:', error);
@@ -109,11 +190,20 @@ const PostsManager = () => {
       showToast(errorMessage, 'error');
       throw error;
     }
-  }, [authToken, loadPostsData]);
+  }, [loadPostsData]);
 
   const handleUpdatePost = useCallback(async (postId: string, formData: PostFormData) => {
     try {
-      await updatePost(authToken, postId, formData);
+      const postData = {
+        title: formData.title,
+        description: formData.description,
+        content: formData.content,
+        slug: formData.slug,
+        category: formData.categoryId ? parseInt(formData.categoryId) : undefined,
+        // Note: Image upload would need additional handling
+      };
+
+      await updatePostServerAction(postId, postData);
       showToast('Post updated successfully!', 'success');
       loadPostsData();
     } catch (error) {
@@ -122,13 +212,13 @@ const PostsManager = () => {
       showToast(errorMessage, 'error');
       throw error;
     }
-  }, [authToken, loadPostsData]);
+  }, [loadPostsData]);
 
   const handleDeletePost = useCallback(async (post: Post) => {
     if (!confirm(`Are you sure you want to delete "${post.title}"?`)) return;
 
     try {
-      await deletePost(authToken, post.documentId);
+      await deletePostServerAction(post.documentId);
       showToast('Post deleted successfully!', 'success');
       loadPostsData();
     } catch (error) {
@@ -136,39 +226,44 @@ const PostsManager = () => {
       const errorMessage = error instanceof Error ? error.message : 'Failed to delete post';
       showToast(errorMessage, 'error');
     }
-  }, [authToken, loadPostsData]);
+  }, [loadPostsData]);
 
   const handleTogglePublish = useCallback(async (post: Post) => {
     const isPublishing = !post.publishedAt;
 
     try {
       if (isPublishing) {
-        await publishPost(authToken, post.documentId);
+        await publishPostServerAction(post.documentId);
         showToast('Post published successfully!', 'success');
       } else {
-        await unpublishPost(authToken, post.documentId);
+        await unpublishPostServerAction(post.documentId);
         showToast('Post unpublished successfully!', 'success');
       }
-
       loadPostsData();
     } catch (error) {
       console.error(`${isPublishing ? 'Publish' : 'Unpublish'} post error:`, error);
       const errorMessage = error instanceof Error ? error.message : `Failed to ${isPublishing ? 'publish' : 'unpublish'} post`;
       showToast(errorMessage, 'error');
     }
-  }, [authToken, loadPostsData]);
+  }, [loadPostsData]);
 
   const handleCreateCategory = useCallback(async (formData: CategoryFormData) => {
     try {
-      await createCategory(authToken, formData);
+      const categoryData = {
+        text: formData.name,
+        // Note: Description and other fields would need to be added to the form
+      };
+
+      await createCategoryServerAction(categoryData);
       showToast('Category created successfully!', 'success');
+      loadCategoriesData();
     } catch (error) {
       console.error('Create category error:', error);
       const errorMessage = error instanceof Error ? error.message : 'Failed to create category';
       showToast(errorMessage, 'error');
       throw error;
     }
-  }, [authToken]);
+  }, [loadCategoriesData]);
 
   // Show loading screen during initialization
   if (isInitializing) {
