@@ -1,7 +1,6 @@
 'use client';
 
 import { getStrapiURL } from "@/lib/utils";
-import sdk from "@/lib/sdk";
 
 const BASE_URL = getStrapiURL();
 const API_URL = `${BASE_URL}/api`;
@@ -129,7 +128,7 @@ class ContentManagerService {
     
     return mapping[contentTypeUid] || contentTypeUid.split('.').pop() + 's';
   }
-  // Get content items for a specific content type using Strapi SDK
+  // Get content items for a specific content type using direct fetch to public API
   async getContentItems(contentType: string, params?: {
     page?: number;
     pageSize?: number;
@@ -140,40 +139,62 @@ class ContentManagerService {
     try {
       const collectionName = this.getCollectionName(contentType);
       
-      const query: any = {
-        populate: params?.populate || '*',
-      };
-
+      // Build query parameters like your blog pages do
+      const searchParams = new URLSearchParams();
+      
       // Add pagination
-      if (params?.page || params?.pageSize) {
-        query.pagination = {
-          page: params?.page || 1,
-          pageSize: params?.pageSize || 10,
-        };
+      if (params?.page) {
+        searchParams.append('pagination[page]', params.page.toString());
       }
-
+      if (params?.pageSize) {
+        searchParams.append('pagination[pageSize]', params.pageSize.toString());
+      }
+      
+      // Add populate
+      if (params?.populate) {
+        searchParams.append('populate', params.populate);
+      } else {
+        // Default populate like your blog pages
+        searchParams.append('populate[image][fields][0]', 'url');
+        searchParams.append('populate[image][fields][1]', 'alternativeText');
+        searchParams.append('populate[image][fields][2]', 'name');
+        searchParams.append('populate[category][fields][0]', 'text');
+      }
+      
       // Add filters
       if (params?.filters) {
-        query.filters = {};
         Object.entries(params.filters).forEach(([key, value]) => {
           if (value !== undefined && value !== '') {
-            query.filters[key] = { $containsi: value };
+            searchParams.append(`filters[${key}][$containsi]`, value.toString());
           }
         });
       }
-
+      
       // Add sorting
       if (params?.sort) {
-        query.sort = params.sort;
+        searchParams.append('sort', params.sort);
       }
 
-      const response = await sdk.collection(collectionName).find(query);
+      const url = `${BASE_URL}/api/${collectionName}?${searchParams.toString()}`;
       
-      // Transform SDK response to match our ContentItem interface
-      const transformedData = response.data.map((item: any) => ({
+      const response = await fetch(url, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+
+      if (!response.ok) {
+        throw new Error(`Failed to fetch ${contentType}: ${response.status}`);
+      }
+
+      const result = await response.json();
+      
+      // Transform response to match our ContentItem interface
+      const transformedData = result.data.map((item: any) => ({
         id: item.id,
         documentId: item.documentId,
-        attributes: item, // The SDK already flattens attributes
+        attributes: item, // Strapi 5 flattened format
         createdAt: item.createdAt,
         updatedAt: item.updatedAt,
         publishedAt: item.publishedAt,
@@ -181,7 +202,7 @@ class ContentManagerService {
       
       return {
         data: transformedData,
-        meta: response.meta,
+        meta: result.meta,
       };
     } catch (error) {
       console.error(`Error fetching ${contentType}:`, error);
@@ -189,24 +210,34 @@ class ContentManagerService {
     }
   }
 
-  // Get single content item using Strapi SDK
+  // Get single content item using direct fetch to public API
   async getContentItem(contentType: string, id: string): Promise<{ data: ContentItem }> {
     try {
-      // Convert content type UID to collection name (e.g., 'api::post.post' -> 'posts')
-      const collectionName = contentType.split('.').pop() + 's';
+      const collectionName = this.getCollectionName(contentType);
       
-      const response = await sdk.collection(collectionName).findOne(id, {
-        populate: '*',
+      const url = `${BASE_URL}/api/${collectionName}/${id}?populate=*`;
+      
+      const response = await fetch(url, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+        },
       });
 
-      // Transform SDK response to match our ContentItem interface
+      if (!response.ok) {
+        throw new Error(`Failed to fetch ${contentType} item: ${response.status}`);
+      }
+
+      const result = await response.json();
+
+      // Transform response to match our ContentItem interface
       const transformedData = {
-        id: response.data.id,
-        documentId: response.data.documentId,
-        attributes: response.data,
-        createdAt: response.data.createdAt,
-        updatedAt: response.data.updatedAt,
-        publishedAt: response.data.publishedAt,
+        id: result.data.id,
+        documentId: result.data.documentId,
+        attributes: result.data,
+        createdAt: result.data.createdAt,
+        updatedAt: result.data.updatedAt,
+        publishedAt: result.data.publishedAt,
       };
 
       return { data: transformedData };
