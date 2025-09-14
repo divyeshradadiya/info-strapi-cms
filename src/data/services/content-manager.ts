@@ -128,7 +128,7 @@ class ContentManagerService {
     
     return mapping[contentTypeUid] || contentTypeUid.split('.').pop() + 's';
   }
-  // Get content items for a specific content type using direct fetch to public API
+  // Get content items for a specific content type - simplified to match blog pages exactly
   async getContentItems(contentType: string, params?: {
     page?: number;
     pageSize?: number;
@@ -139,43 +139,36 @@ class ContentManagerService {
     try {
       const collectionName = this.getCollectionName(contentType);
       
-      // Build query parameters like your blog pages do
-      const searchParams = new URLSearchParams();
+      // Create the exact same URL structure as your working blog pages
+      let url = `${BASE_URL}/api/${collectionName}`;
+      
+      // Build query parameters exactly like your blog loader does
+      const queryParams = [];
+      
+      // Add populate parameters (same as blog)
+      queryParams.push('populate[image][fields][0]=url');
+      queryParams.push('populate[image][fields][1]=alternativeText');
+      queryParams.push('populate[image][fields][2]=name');
+      queryParams.push('populate[category][fields][0]=text');
       
       // Add pagination
       if (params?.page) {
-        searchParams.append('pagination[page]', params.page.toString());
+        queryParams.push(`pagination[page]=${params.page}`);
       }
       if (params?.pageSize) {
-        searchParams.append('pagination[pageSize]', params.pageSize.toString());
-      }
-      
-      // Add populate
-      if (params?.populate) {
-        searchParams.append('populate', params.populate);
-      } else {
-        // Default populate like your blog pages
-        searchParams.append('populate[image][fields][0]', 'url');
-        searchParams.append('populate[image][fields][1]', 'alternativeText');
-        searchParams.append('populate[image][fields][2]', 'name');
-        searchParams.append('populate[category][fields][0]', 'text');
+        queryParams.push(`pagination[pageSize]=${params.pageSize}`);
       }
       
       // Add filters
-      if (params?.filters) {
-        Object.entries(params.filters).forEach(([key, value]) => {
-          if (value !== undefined && value !== '') {
-            searchParams.append(`filters[${key}][$containsi]`, value.toString());
-          }
-        });
+      if (params?.filters?.title) {
+        queryParams.push(`filters[title][$containsi]=${encodeURIComponent(params.filters.title)}`);
       }
       
-      // Add sorting
-      if (params?.sort) {
-        searchParams.append('sort', params.sort);
+      if (queryParams.length > 0) {
+        url += '?' + queryParams.join('&');
       }
-
-      const url = `${BASE_URL}/api/${collectionName}?${searchParams.toString()}`;
+      
+      console.log('Content Manager API URL:', url);
       
       const response = await fetch(url, {
         method: 'GET',
@@ -185,10 +178,12 @@ class ContentManagerService {
       });
 
       if (!response.ok) {
+        console.error('API Response not OK:', response.status, response.statusText);
         throw new Error(`Failed to fetch ${contentType}: ${response.status}`);
       }
 
       const result = await response.json();
+      console.log('API Response:', result);
       
       // Transform response to match our ContentItem interface
       const transformedData = result.data.map((item: any) => ({
