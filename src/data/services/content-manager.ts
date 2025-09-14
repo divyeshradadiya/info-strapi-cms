@@ -37,9 +37,25 @@ export interface ApiResponse<T> {
 
 class ContentManagerService {
   private token: string | null = null;
+  private isAuthenticated: boolean = false;
+
+  constructor() {
+    // Check if user is already authenticated in localStorage
+    if (typeof window !== 'undefined') {
+      const savedAuth = localStorage.getItem('content-manager-auth');
+      if (savedAuth === 'true') {
+        this.isAuthenticated = true;
+        this.token = process.env.NEXT_PUBLIC_STRAPI_API_TOKEN || null;
+      }
+    }
+  }
 
   setToken(token: string) {
     this.token = token;
+  }
+
+  getIsAuthenticated() {
+    return this.isAuthenticated;
   }
 
   private getHeaders() {
@@ -54,28 +70,38 @@ class ContentManagerService {
     return headers;
   }
 
-  // Authentication
+  // Dummy Authentication using environment variables
   async login(email: string, password: string) {
     try {
-      const response = await fetch(`${API_URL}/auth/local`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          identifier: email,
-          password: password,
-        }),
-      });
-
-      if (!response.ok) {
-        throw new Error('Login failed');
+      const envEmail = process.env.CONTENT_MANAGER_EMAIL || 'admin@example.com';
+      const envPassword = process.env.CONTENT_MANAGER_PASSWORD || 'admin123';
+      
+      if (email === envEmail && password === envPassword) {
+        this.isAuthenticated = true;
+        this.token = process.env.NEXT_PUBLIC_STRAPI_API_TOKEN || null;
+        
+        // Save authentication state in localStorage
+        if (typeof window !== 'undefined') {
+          localStorage.setItem('content-manager-auth', 'true');
+        }
+        
+        return { success: true, message: 'Login successful' };
+      } else {
+        throw new Error('Invalid credentials');
       }
-
-      const data = await response.json();
-      this.setToken(data.jwt);
-      return data;
     } catch (error) {
       console.error('Login error:', error);
       throw error;
+    }
+  }
+
+  // Logout function
+  logout() {
+    this.isAuthenticated = false;
+    this.token = null;
+    
+    if (typeof window !== 'undefined') {
+      localStorage.removeItem('content-manager-auth');
     }
   }
 

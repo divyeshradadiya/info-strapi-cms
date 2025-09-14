@@ -38,6 +38,22 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
 
   // Import adminLogin here to avoid circular dependencies
   const adminLogin = async (email: string, password: string): Promise<string> => {
+    console.log('Auth login with dummy credentials');
+
+    // Use dummy authentication instead of API call
+    const envEmail = process.env.CONTENT_MANAGER_EMAIL || 'admin@example.com';
+    const envPassword = process.env.CONTENT_MANAGER_PASSWORD || 'admin123';
+    
+    if (email === envEmail && password === envPassword) {
+      const token = process.env.NEXT_PUBLIC_STRAPI_API_TOKEN || '';
+      console.log('Auth login successful - using API token');
+      return token;
+    } else {
+      throw new Error('Invalid credentials');
+    }
+
+    // Commented out the actual API call since we're using dummy auth
+    /*
     const API_BASE = getStrapiURL();
     console.log('Auth login using URL:', API_BASE);
 
@@ -56,12 +72,11 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
 
     const data = await response.json();
 
-    if (!response.ok) {
-      throw new Error(data.error?.message || `Admin login failed: ${response.status}`);
     }
 
     // Return the JWT token, not 'data.data.token'
     return data.jwt;
+    */
   };
 
   const login = async (userEmail: string, password: string, rememberMe: boolean) => {

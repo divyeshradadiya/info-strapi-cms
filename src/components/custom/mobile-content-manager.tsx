@@ -45,6 +45,15 @@ export default function MobileContentManager() {
   const [password, setPassword] = useState('');
   const [authLoading, setAuthLoading] = useState(false);
 
+  // Check authentication on component mount
+  useEffect(() => {
+    const isAuth = contentManagerService.getIsAuthenticated();
+    setIsAuthenticated(isAuth);
+    if (isAuth) {
+      loadContentTypes();
+    }
+  }, []);
+
   // Login function
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -155,6 +164,11 @@ export default function MobileContentManager() {
           <div className="text-center space-y-2">
             <h1 className="text-2xl font-bold text-gray-900">Content Manager</h1>
             <p className="text-gray-600">Sign in to manage your content</p>
+            <div className="text-xs text-gray-500 bg-gray-100 p-2 rounded">
+              <p><strong>Demo Credentials:</strong></p>
+              <p>Email: admin@example.com</p>
+              <p>Password: admin123</p>
+            </div>
           </div>
           
           <form onSubmit={handleLogin} className="space-y-4">
@@ -218,7 +232,7 @@ export default function MobileContentManager() {
           size="icon"
           onClick={() => {
             setIsAuthenticated(false);
-            contentManagerService.setToken('');
+            contentManagerService.logout();
           }}
         >
           <Settings className="h-5 w-5" />

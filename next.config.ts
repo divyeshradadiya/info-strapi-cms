@@ -1,6 +1,10 @@
 import type { NextConfig } from "next";
 const nextConfig: NextConfig = {
   /* config options here */
+  env: {
+    CONTENT_MANAGER_EMAIL: process.env.CONTENT_MANAGER_EMAIL,
+    CONTENT_MANAGER_PASSWORD: process.env.CONTENT_MANAGER_PASSWORD,
+  },
   images: {
     remotePatterns: [
       {

@@ -65,11 +65,24 @@ export interface CategoryFormData {
   slug: string;
 }
 
-// Admin Authentication - Use Users & Permissions API
+// Admin Authentication - Use dummy auth instead of API call
 export const adminLogin = async (email: string, password: string): Promise<string> => {
   console.log('Attempting admin login with:', { email, password: '***' });
   
-  // Use the correct Strapi authentication endpoint
+  // Use dummy authentication instead of API call
+  const envEmail = process.env.CONTENT_MANAGER_EMAIL || 'admin@example.com';
+  const envPassword = process.env.CONTENT_MANAGER_PASSWORD || 'admin123';
+  
+  if (email === envEmail && password === envPassword) {
+    const token = process.env.NEXT_PUBLIC_STRAPI_API_TOKEN || '';
+    console.log('Admin login successful - using API token');
+    return token;
+  } else {
+    throw new Error('Invalid credentials');
+  }
+
+  // Commented out the actual API call since we're using dummy auth
+  /*
   const response = await fetch(`${API_BASE}/api/auth/local`, {
     method: 'POST',
     headers: { 
@@ -91,6 +104,7 @@ export const adminLogin = async (email: string, password: string): Promise<strin
 
   // Return the JWT token, not 'data.data.token'
   return data.jwt;
+  */
 };
 
 // Load Posts
