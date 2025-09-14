@@ -41,14 +41,15 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     const API_BASE = getStrapiURL();
     console.log('Auth login using URL:', API_BASE);
 
-    const response = await fetch(`${API_BASE}/admin/login`, {
+    // Use the correct Strapi authentication endpoint
+    const response = await fetch(`${API_BASE}/api/auth/local`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
         'Accept': 'application/json'
       },
       body: JSON.stringify({
-        email: email,
+        identifier: email, // Use 'identifier' instead of 'email'
         password: password,
       }),
     });
@@ -59,7 +60,8 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
       throw new Error(data.error?.message || `Admin login failed: ${response.status}`);
     }
 
-    return data.data.token;
+    // Return the JWT token, not 'data.data.token'
+    return data.jwt;
   };
 
   const login = async (userEmail: string, password: string, rememberMe: boolean) => {

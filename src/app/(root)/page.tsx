@@ -10,7 +10,7 @@ export default async function Home() {
       <section className="py-20 lg:py-32 bg-white dark:bg-zinc-900">
         <div className="container relative mx-auto px-4">
           <div className="text-center max-w-4xl mx-auto">
-            <div className="inline-flex items-center px-4 py-2 mb-6 text-sm font-medium rounded-full bg-blue-50 text-blue-600 dark:bg-blue-900/30 dark:text-blue-400 border border-blue-200 dark:border-blue-800">
+            <div className="inline-flex items-center px-4 py-2 mb-6 text-sm font-medium rounded-full bg-blue-50 text-blue-600 dark:bg-blue-900/30 dark:text-blue-400 border border-blue-200 dark:border-blue-800 font-grotesk">
               <Star className="w-4 h-4 mr-2" />
               Trusted by 50,000+ readers worldwide
             </div>
