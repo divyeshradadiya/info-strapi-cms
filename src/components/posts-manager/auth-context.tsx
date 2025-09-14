@@ -113,9 +113,9 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     if (!token) return false;
 
     try {
-      // Simple token validation by making a test request
+      // Simple token validation by making a test request to public API
       const API_BASE = getStrapiURL();
-      const response = await fetch(`${API_BASE}/content-manager/collection-types/api::post.post?pagination[page]=1&pagination[pageSize]=1`, {
+      const response = await fetch(`${API_BASE}/api/posts?pagination[page]=1&pagination[pageSize]=1`, {
         headers: {
           'Authorization': `Bearer ${token}`,
           'Content-Type': 'application/json',

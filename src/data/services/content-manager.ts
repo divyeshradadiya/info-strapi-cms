@@ -106,29 +106,15 @@ class ContentManagerService {
     }
   }
 
-  // Get all content types
+  // Get all content types - using hardcoded list since we don't need admin API
   async getContentTypes(): Promise<ContentType[]> {
-    try {
-      const response = await fetch(`${API_URL}/content-type-builder/content-types`, {
-        headers: this.getHeaders(),
-      });
-
-      if (!response.ok) {
-        throw new Error('Failed to fetch content types');
-      }
-
-      const data = await response.json();
-      return data.data || [];
-    } catch (error) {
-      console.error('Error fetching content types:', error);
-      // Fallback to common content types if API fails
-      return [
-        { uid: 'api::category.category', displayName: 'Category', singularName: 'category', pluralName: 'categories', kind: 'collectionType', attributes: {} },
-        { uid: 'api::post.post', displayName: 'Post', singularName: 'post', pluralName: 'posts', kind: 'collectionType', attributes: {} },
-        { uid: 'api::page.page', displayName: 'Page', singularName: 'page', pluralName: 'pages', kind: 'collectionType', attributes: {} },
-        { uid: 'api::global.global', displayName: 'Global', singularName: 'global', pluralName: 'globals', kind: 'singleType', attributes: {} },
-      ];
-    }
+    // Return predefined content types instead of making API calls to admin endpoints
+    return [
+      { uid: 'api::category.category', displayName: 'Category', singularName: 'category', pluralName: 'categories', kind: 'collectionType', attributes: {} },
+      { uid: 'api::post.post', displayName: 'Post', singularName: 'post', pluralName: 'posts', kind: 'collectionType', attributes: {} },
+      { uid: 'api::page.page', displayName: 'Page', singularName: 'page', pluralName: 'pages', kind: 'collectionType', attributes: {} },
+      { uid: 'api::global.global', displayName: 'Global', singularName: 'global', pluralName: 'globals', kind: 'singleType', attributes: {} },
+    ];
   }
 
   // Helper function to convert content type UID to collection name
