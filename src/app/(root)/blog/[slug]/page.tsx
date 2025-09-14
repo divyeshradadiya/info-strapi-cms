@@ -52,7 +52,7 @@ export default async function SinglePost({ params }: PageProps) {
 
   // Fetch related blogs from the same category
   const relatedBlogsData = await getBlogPosts(1, "", post.category?.text || "");
-  const relatedBlogs = relatedBlogsData?.data?.filter((blog: any) => blog.slug !== slug).slice(0, 3) || [];
+  const relatedBlogs = relatedBlogsData?.data?.filter((blog: any) => blog.slug !== slug).slice(0, 9) || [];
 
   console.log(blocks, "blocks");
   console.log(post, "post");

@@ -1,5 +1,5 @@
 import { publicSdk } from "@/lib/sdk";
-const PAGE_SIZE = 3;
+const PAGE_SIZE = 9;
 const ADMIN_PAGE_SIZE = 9; // For content manager
 
 export async function getGlobalPageData() {
